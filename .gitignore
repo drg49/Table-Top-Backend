@@ -1,0 +1,28 @@
+# Flask app
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyc
+*.egg-info/
+*.egg
+*.pot
+*.mo
+*.pdf
+*.log
+
+# Virtual environment
+venv/
+env/
+*.env
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Other files
+.DS_Store
+Thumbs.db
