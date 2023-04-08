@@ -3,10 +3,10 @@ from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, Users
 
-auth_routes = Blueprint('routes', __name__)
+authentication = Blueprint('authentication', __name__)
 
-@auth_routes.get('/get-all')
-def get_all():
+@authentication.get('/get-all-users')
+def get_all_users():
     users = Users.query.all()
     output = [ 
         { key: getattr(user, key) for key in ['id', 'username', 'email', 'first_name', 'last_name', 'created_at'] } 
@@ -15,7 +15,7 @@ def get_all():
     return jsonify(output)
 
 
-@auth_routes.route('/register', methods=['POST'])
+@authentication.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     
@@ -38,7 +38,7 @@ def register():
         return jsonify({ 'message': 'The user could not be created.' }), 500
     
 
-@auth_routes.route('/login', methods=['POST'])
+@authentication.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
 
