@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify, make_response
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, Users
+from models import db
+from models.user import Users
 
 authentication = Blueprint('authentication', __name__)
 

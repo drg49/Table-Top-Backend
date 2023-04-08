@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify, make_response
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 from dotenv import load_dotenv
 from routes import routes
 from models import db
