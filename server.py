@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from dotenv import load_dotenv
 from routes import routes
 from models import db
@@ -17,6 +18,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 
 # Initialize the SQLAlchemy instance with the Flask app
 db.init_app(app)
+
+CORS(app)
 
 app.register_blueprint(routes)
 
