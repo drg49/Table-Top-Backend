@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify, make_response
-from datetime import datetime, timedelta
+from flask_login import login_required, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta
 from models import db
 from models.user import Users
-from flask_login import login_required, login_user
 
 authentication = Blueprint('authentication', __name__)
 
@@ -28,7 +28,7 @@ def register():
     
     except Exception as e:
         print(f'An exception occured: {e}')
-        return jsonify({ 'message': 'The user could not be created.' }), 500
+        return jsonify({ 'message': 'Failed to register.' }), 500
     
 
 @authentication.route('/login', methods=['POST'])
@@ -53,10 +53,26 @@ def login():
 
     except Exception as e:
         print(f'An exception occured: {e}')
-        return jsonify({ 'message': 'The user could not be created.' }), 500
+        return jsonify({ 'message': 'Failed to log in.' }), 500
+
+
+@authentication.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    try:
+        logout_user()
+
+        response = make_response(jsonify({'message': 'Logged out successfully.'}))
+        response.delete_cookie('user_id')
+
+        return response, 200
+
+    except Exception as e:
+        print(f'An exception occurred: {e}')
+        return jsonify({'message': 'Failed to log out.'}), 500
 
 
 @authentication.route('/validate-user', methods=['GET'])
 @login_required
 def validate_user():
-    return jsonify({ 'message': 'User successfully validfated.' }), 200
+    return jsonify({ 'message': 'User successfully validated.' }), 200

@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_login import LoginManager
 from dotenv import load_dotenv
 from routes import routes
 from models import db
-from flask_login import LoginManager
 import os
 
 app = Flask(__name__)
