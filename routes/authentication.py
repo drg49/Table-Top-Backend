@@ -1,22 +1,11 @@
 from flask import Blueprint, request, jsonify, make_response
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models import db
 from models.user import Users
-from routes.decorators import jwt_required_cookie
+from flask_login import login_required, login_user
 
 authentication = Blueprint('authentication', __name__)
-
-# @authentication.get('/get-all-users')
-# def get_all_users():
-#     users = Users.query.all()
-#     output = [ 
-#         { key: getattr(user, key) for key in ['id', 'username', 'email', 'first_name', 'last_name', 'created_at'] } 
-#         for user in users
-#     ]
-#     return jsonify(output)
-
 
 @authentication.route('/register', methods=['POST'])
 def register():
@@ -53,11 +42,12 @@ def login():
         if not user or not check_password_hash(user.password, data.get('password')):
             return jsonify({'message': 'Invalid credentials.'}), 401
 
+        login_user(user)
+
         response = make_response(jsonify({'message': 'Logged in successfully.'}))
 
-        token = create_access_token(identity=user.id)
         expires = datetime.now() + timedelta(days=7)
-        response.set_cookie('token', token, httponly=True, secure=True, samesite='Strict', expires=expires)
+        response.set_cookie('user_id', str(user.id), httponly=True, secure=True, samesite='Strict', expires=expires)
 
         return response, 200
 
@@ -66,8 +56,7 @@ def login():
         return jsonify({ 'message': 'The user could not be created.' }), 500
 
 
-@authentication.route('/validate-user', methods=['POST'])
-@jwt_required_cookie
+@authentication.route('/validate-user', methods=['GET'])
+@login_required
 def validate_user():
-    current_user_id = get_jwt_identity()
-    return jsonify(logged_in_as=current_user_id), 200
+    return jsonify({ 'message': 'User successfully validfated.' }), 200
