@@ -7,6 +7,18 @@ from models.user import Users
 
 authentication = Blueprint('authentication', __name__)
 
+
+def perform_login(user, response_message, status_code):
+    login_user(user)
+
+    response = make_response(jsonify({'message': response_message}))
+
+    expires = datetime.now() + timedelta(days=7)
+    response.set_cookie('user_id', str(user.id), httponly=True, secure=True, samesite='Strict', expires=expires)
+
+    return response, status_code
+
+
 @authentication.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -24,7 +36,9 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        return jsonify({ 'message': 'User successfully registered.' }), 201
+        user_to_login = Users.query.filter_by(username=new_user.username).first()
+
+        return perform_login(user_to_login, 'User successfully registered.', 200)
     
     except Exception as e:
         print(f'An exception occured: {e}')
@@ -42,14 +56,7 @@ def login():
         if not user or not check_password_hash(user.password, data.get('password')):
             return jsonify({'message': 'Invalid credentials.'}), 401
 
-        login_user(user)
-
-        response = make_response(jsonify({'message': 'Logged in successfully.'}))
-
-        expires = datetime.now() + timedelta(days=7)
-        response.set_cookie('user_id', str(user.id), httponly=True, secure=True, samesite='Strict', expires=expires)
-
-        return response, 200
+        return perform_login(user, 'Logged in successfully.', 200)
 
     except Exception as e:
         print(f'An exception occured: {e}')
