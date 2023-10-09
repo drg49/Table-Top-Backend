@@ -1,6 +1,8 @@
 from models import db
 from flask_login import UserMixin
 
+# In the context of this application, the term "user" pertains exclusively to individuals employed within the restaurant establishment. 
+# It is noteworthy that customers are not required to register or establish accounts within this system.
 class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(25), nullable=False)
