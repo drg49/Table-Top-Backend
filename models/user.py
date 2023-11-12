@@ -1,4 +1,4 @@
-from models import db
+from . import db
 from flask_login import UserMixin
 
 # In the context of this application, the term "user" pertains exclusively to individuals employed within the restaurant establishment. 
